@@ -1,4 +1,4 @@
-package com.bookflow.book_flow.domain;
+package com.bookflow.book_flow.domain.entities;
 
 import com.bookflow.book_flow.domain.enums.UserType;
 import jakarta.persistence.Column;

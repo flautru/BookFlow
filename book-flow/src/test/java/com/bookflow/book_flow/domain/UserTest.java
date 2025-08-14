@@ -2,6 +2,7 @@ package com.bookflow.book_flow.domain;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.bookflow.book_flow.domain.entities.User;
 import com.bookflow.book_flow.domain.enums.UserType;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,16 @@ class UserTest {
     assertThat(user.isAdult()).isEqualTo(false);
   }
 
+  @Test
+  void isAdult_should_handle_exactly_18_years() {
+    // Given
+    LocalDate edgeYears = LocalDate.now().minusYears(18);
+    User user = createTestUserWithBirthDay(edgeYears);
+
+    // When/Then
+    assertThat(user.isAdult()).isEqualTo(true);
+  }
+
   private User createTestUser() {
     User user = new User();
     user.setFirstName("Marie");
@@ -66,15 +77,5 @@ class UserTest {
     user.setBirthDate(birthDate);
 
     return user;
-  }
-
-  @Test
-  void isAdult_should_handle_exactly_18_years() {
-    // Given
-    LocalDate edgeYears = LocalDate.now().minusYears(18);
-    User user = createTestUserWithBirthDay(edgeYears);
-
-    // When/Then
-    assertThat(user.isAdult()).isEqualTo(true);
   }
 }
