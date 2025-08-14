@@ -54,14 +54,12 @@ class UserRepositoryTest {
     Optional<User> existingUser = userRepository.findByMemberNumber(memberNumber);
 
     //then
-    assertThat(savedUser.getId()).isNotNull();
-    assertThat(savedUser.getEmail()).isEqualTo("marie@dubois.com");
-    assertThat(savedUser.getUserType()).isEqualTo(UserType.STUDENT);
+    assertThat(existingUser.get().getId()).isNotNull();
 
-    assertThat(savedUser)
+    assertThat(existingUser.get())
         .usingRecursiveComparison()
         .ignoringFields("id")
-        .isEqualTo(existingUser.get());
+        .isEqualTo(savedUser);
   }
 
   @Test
