@@ -3,8 +3,11 @@ package com.bookflow.book_flow.utils;
 import com.bookflow.book_flow.domain.entities.Author;
 import com.bookflow.book_flow.domain.entities.AuthorRole;
 import com.bookflow.book_flow.domain.entities.Book;
+import com.bookflow.book_flow.domain.entities.BookGenre;
+import com.bookflow.book_flow.domain.entities.Genre;
 import com.bookflow.book_flow.domain.entities.User;
 import com.bookflow.book_flow.domain.enums.ContributionType;
+import com.bookflow.book_flow.domain.enums.GenreIntensity;
 import com.bookflow.book_flow.domain.enums.UserType;
 import java.time.LocalDate;
 
@@ -86,6 +89,21 @@ public class TestDataFactory {
     authorRole.setAuthor(author);
     authorRole.setContributionType(contributionType);
     return authorRole;
+  }
+
+  public static Genre createTestGenre(String name, String description) {
+    Genre genre = new Genre();
+    genre.setName(name);
+    genre.setDescription(description);
+    return genre;
+  }
+  
+  public static BookGenre createTestBookGenre(Book book, Genre genre, GenreIntensity intensity) {
+    BookGenre bookGenre = new BookGenre();
+    bookGenre.setBook(book);
+    bookGenre.setGenre(genre);
+    bookGenre.setIntensity(intensity);
+    return bookGenre;
   }
 
 }
