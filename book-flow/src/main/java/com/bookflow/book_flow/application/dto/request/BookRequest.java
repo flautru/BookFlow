@@ -22,5 +22,6 @@ public class BookRequest {
   @Size(max = 255, message = "Subtitle must not exceed 255 characters")
   private String subtitle;
 
+  @Size(max = 5000, message = "Description must not exceed 5000 characters")
   private String description;
 }
