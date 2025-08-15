@@ -4,6 +4,7 @@ import static com.bookflow.book_flow.utils.TestDataFactory.createTestBook;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookflow.book_flow.domain.entities.Book;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,14 +79,14 @@ class BookRepositoryTest {
     entityManager.persistAndFlush(book);
 
     //When
-    Optional<Book> existingBook = bookRepository.findByTitle(book.getTitle());
+    List<Book> existingBooks = bookRepository.findByTitleContainingIgnoreCase(book.getTitle());
 
     //Then
-    assertThat(existingBook).isPresent();
-    assertThat(existingBook.get().getTitle()).isEqualTo(book.getTitle());
-    assertThat(existingBook.get().getSubtitle()).isEqualTo(book.getSubtitle());
-    assertThat(existingBook.get().getIsbn()).isEqualTo(book.getIsbn());
-    assertThat(existingBook.get().getDescription()).isEqualTo(book.getDescription());
+    assertThat(existingBooks).hasSize(1);
+    assertThat(existingBooks.getFirst().getTitle()).isEqualTo(book.getTitle());
+    assertThat(existingBooks.getFirst().getSubtitle()).isEqualTo(book.getSubtitle());
+    assertThat(existingBooks.getFirst().getIsbn()).isEqualTo(book.getIsbn());
+    assertThat(existingBooks.getFirst().getDescription()).isEqualTo(book.getDescription());
   }
 
   @Test
@@ -94,9 +95,9 @@ class BookRepositoryTest {
     String noExistingTitle = "Not existing";
 
     //When
-    Optional<Book> existingBook = bookRepository.findByTitle(noExistingTitle);
+    List<Book> existingBooks = bookRepository.findByTitleContainingIgnoreCase(noExistingTitle);
 
     //Then
-    assertThat(existingBook).isEmpty();
+    assertThat(existingBooks).isEmpty();
   }
 }
