@@ -1,8 +1,8 @@
 package com.bookflow.book_flow.application.services;
 
+import com.bookflow.book_flow.application.exceptions.EntityNotFoundException;
 import com.bookflow.book_flow.domain.entities.Author;
 import com.bookflow.book_flow.domain.repositories.AuthorRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class AuthorService {
   // Core Author operations
   public Author findById(Long id) {
     return authorRepository.findById(id).orElseThrow(
-        () -> new EntityNotFoundException("Author not found with id : " + id));
+        () -> new EntityNotFoundException("Author", id));
   }
 
   //TODO : CHANGE WITH PAGINATION

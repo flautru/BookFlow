@@ -155,7 +155,6 @@ class BookControllerIntegrationTest {
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    // TODO: Changer en HttpStatus.NOT_FOUND quand @ControllerAdvice sera implémenté
   }
 
   @Test
@@ -245,7 +244,7 @@ class BookControllerIntegrationTest {
   }
 
   @Test
-  void getBooksByAuthor_should_return_500_with_non_existing_author() {
+  void getBooksByAuthor_should_return_404_with_non_existing_author() {
     // Given
     Long nonExistingAuthorId = 999999L;
 
@@ -254,8 +253,8 @@ class BookControllerIntegrationTest {
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
     // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    // TODO: Changer en HttpStatus.NOT_FOUND avec @ControllerAdvice
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
   }
 
   @Test
@@ -298,7 +297,7 @@ class BookControllerIntegrationTest {
   }
 
   @Test
-  void getBookAuthors_should_return_500_with_non_existing_book() {
+  void getBookAuthors_should_return_404_with_non_existing_book() {
     // Given
     Long nonExistingBookId = 999999L;
 
@@ -307,8 +306,7 @@ class BookControllerIntegrationTest {
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
     // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    // TODO: Changer en HttpStatus.NOT_FOUND avec @ControllerAdvice
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
@@ -353,7 +351,7 @@ class BookControllerIntegrationTest {
   }
 
   @Test
-  void getBookGenres_should_return_500_with_non_existing_book() {
+  void getBookGenres_should_return_404_with_non_existing_book() {
     // Given
     Long nonExistingBookId = 999999L;
 
@@ -362,8 +360,7 @@ class BookControllerIntegrationTest {
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
     // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    // TODO: Changer en HttpStatus.NOT_FOUND avec @ControllerAdvice
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
@@ -412,15 +409,13 @@ class BookControllerIntegrationTest {
     ResponseEntity<String> response = restTemplate.postForEntity(baseUrl, entity, String.class);
 
     // Then
-    // TODO: Vérifier le comportement exact selon tes validations @Valid
-    assertThat(response.getStatusCode()).isIn(HttpStatus.BAD_REQUEST,
-        HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
     assertThat(bookRepository.count()).isEqualTo(0);
   }
 
   @Test
-  void createBook_should_return_500_with_duplicate_isbn() {
+  void createBook_should_return_409_with_duplicate_isbn() {
     // Given
     Book existingBook = TestDataFactory.createTestBook("1234567890123", "Livre existant",
         "Déjà en base", "Premier livre");
@@ -440,7 +435,7 @@ class BookControllerIntegrationTest {
     ResponseEntity<String> response = restTemplate.postForEntity(baseUrl, entity, String.class);
 
     // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
 
     assertThat(bookRepository.count()).isEqualTo(1);
     Book onlyBook = bookRepository.findByIsbn("1234567890123").orElse(null);

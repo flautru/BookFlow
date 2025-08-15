@@ -1,8 +1,8 @@
 package com.bookflow.book_flow.application.services;
 
+import com.bookflow.book_flow.application.exceptions.EntityNotFoundException;
 import com.bookflow.book_flow.domain.entities.Book;
 import com.bookflow.book_flow.domain.repositories.BookRepository;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ public class BookService {
 
   public Book findById(Long id) {
     return bookRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Book not found with id : " + id));
+        .orElseThrow(() -> new EntityNotFoundException("Book", id));
   }
 
   public List<Book> searchAllByTitle(String title) {

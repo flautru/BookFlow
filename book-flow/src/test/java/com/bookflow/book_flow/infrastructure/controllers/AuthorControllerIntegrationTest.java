@@ -127,7 +127,7 @@ class AuthorControllerIntegrationTest {
     ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
     // Then
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
