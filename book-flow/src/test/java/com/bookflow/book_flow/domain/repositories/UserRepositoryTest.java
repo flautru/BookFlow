@@ -1,10 +1,10 @@
 package com.bookflow.book_flow.domain.repositories;
 
+import static com.bookflow.book_flow.utils.TestDataFactory.createTestUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookflow.book_flow.domain.entities.User;
 import com.bookflow.book_flow.domain.enums.UserType;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -98,35 +98,5 @@ class UserRepositoryTest {
     assertThat(studentsUsers).extracting(User::getEmail)
         .containsExactly("marie@dubois.com", "jean@dupont");
 
-  }
-
-  private User createTestUser() {
-    User user = new User();
-    user.setFirstName("Marie");
-    user.setLastName("Dubois");
-    user.setAddress("12 rue Test");
-    user.setEmail("marie@dubois.com");
-    user.setUserType(UserType.STUDENT);
-    user.setMemberNumber(14587L);
-    return user;
-  }
-
-  private User createTestUser(String firstName, String lastName, String adress, String email,
-      UserType userType, Long numberMember) {
-    User user = new User();
-    user.setFirstName(firstName);
-    user.setLastName(lastName);
-    user.setAddress(adress);
-    user.setEmail(email);
-    user.setUserType(userType);
-    user.setMemberNumber(numberMember);
-    return user;
-  }
-
-  private User createTestUserWithBirthDay(LocalDate birthDate) {
-    User user = createTestUser();
-    user.setBirthDate(birthDate);
-
-    return user;
   }
 }

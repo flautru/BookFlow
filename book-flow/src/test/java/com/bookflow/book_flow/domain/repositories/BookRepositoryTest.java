@@ -1,5 +1,6 @@
 package com.bookflow.book_flow.domain.repositories;
 
+import static com.bookflow.book_flow.utils.TestDataFactory.createTestBook;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookflow.book_flow.domain.entities.Book;
@@ -97,23 +98,5 @@ class BookRepositoryTest {
 
     //Then
     assertThat(existingBook).isEmpty();
-  }
-
-  private Book createTestBook() {
-    Book book = new Book();
-    book.setIsbn("1111111111111");
-    book.setTitle("My Test");
-    book.setSubtitle("test is important");
-    book.setDescription("Testing is not doubt, its important");
-    return book;
-  }
-
-  private Book createTestBook(String isbn, String title, String subtitle, String description) {
-    Book book = new Book();
-    book.setIsbn(isbn);
-    book.setTitle(title);
-    book.setSubtitle(subtitle);
-    book.setDescription(description);
-    return book;
   }
 }

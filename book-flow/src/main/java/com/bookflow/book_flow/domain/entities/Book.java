@@ -1,5 +1,6 @@
 package com.bookflow.book_flow.domain.entities;
 
+import com.bookflow.book_flow.domain.enums.BookCondition;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +37,7 @@ public class Book {
 
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<PhysicalBook> physicalBooks = new HashSet<>();
-  
+
   public long getAvailableCopies() {
     return physicalBooks.stream()
         .filter(pb -> pb.getCondition() != BookCondition.LOST)

@@ -1,5 +1,6 @@
 package com.bookflow.book_flow.domain.repositories;
 
+import static com.bookflow.book_flow.utils.TestDataFactory.createTestAuthor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookflow.book_flow.domain.entities.Author;
@@ -68,23 +69,4 @@ class AuthorRepositoryTest {
     assertThat(optionalAuthor).isEmpty();
   }
 
-  private Author createTestAuthor() {
-    Author author = new Author();
-    author.setFirstName("Marie");
-    author.setLastName("Dubois");
-    author.setNationality("FRANCE");
-    author.setBirthDate(LocalDate.of(1995, 1, 1));
-
-    return author;
-  }
-
-  private Author createTestAuthor(String firstName, String lastName, String nationality,
-      LocalDate birthDate) {
-    Author author = new Author();
-    author.setFirstName(firstName);
-    author.setLastName(lastName);
-    author.setNationality(nationality);
-    author.setBirthDate(birthDate);
-    return author;
-  }
 }

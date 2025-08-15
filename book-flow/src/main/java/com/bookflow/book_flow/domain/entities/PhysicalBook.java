@@ -1,5 +1,6 @@
 package com.bookflow.book_flow.domain.entities;
 
+import com.bookflow.book_flow.domain.enums.BookCondition;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,7 +25,7 @@ public class PhysicalBook {
 
   @ManyToOne
   @JoinColumn(name = "book_id")
-  private Book book; // ← Relation vers l'œuvre
+  private Book book;
 
   @Column(unique = true, nullable = false)
   private String barcode;
