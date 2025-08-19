@@ -52,6 +52,16 @@ public class TestDataFactory {
     return book;
   }
 
+  public static Book createBookWithTitle(String title) {
+    Book book = createTestBook("9785412000046", title, "", "");
+    return book;
+  }
+
+  public static Book createBookWithIsbn(String isbn) {
+    Book book = createTestBook(isbn, "Nous les dieux", "", "");
+    return book;
+  }
+
   public static User createTestUser() {
     User user = new User();
     user.setFirstName("Marie");
@@ -97,7 +107,7 @@ public class TestDataFactory {
     genre.setDescription(description);
     return genre;
   }
-  
+
   public static BookGenre createTestBookGenre(Book book, Genre genre, GenreIntensity intensity) {
     BookGenre bookGenre = new BookGenre();
     bookGenre.setBook(book);

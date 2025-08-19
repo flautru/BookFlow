@@ -1,7 +1,7 @@
 package com.bookflow.book_flow.application.validators;
 
-import com.bookflow.book_flow.application.dto.request.BookRequest;
 import com.bookflow.book_flow.application.exceptions.InvalidReferenceException;
+import com.bookflow.book_flow.domain.entities.Book;
 import com.bookflow.book_flow.domain.repositories.BookRepository;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -11,50 +11,53 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class BookRequestValidator {
+public class BookValidator {
 
-  private static final Logger logger = LoggerFactory.getLogger(BookRequestValidator.class);
+  private static final Logger logger = LoggerFactory.getLogger(BookValidator.class);
 
   private static final Pattern ISBN_DIGIT_PATTERN = Pattern.compile("^\\d{13}$");
-  private static final Pattern XSS_PATTERN = Pattern.compile(".*[<>\"'&;].*");
+  private static final Pattern XSS_PATTERN = Pattern.compile(".*[<>\";].*");
+
+  // ⚠️ LIMITATION CONNUE : Certains livres techniques légitimes sont bloqués
+  // Exemples : "JavaScript pour les nuls", "Learning script programming"
+  //
+  // DÉCISION : Prioriser la sécurité pour le MVP
+  // TODO FUTUR : Affiner la détection (whitelist, contexte, patterns spécifiques)
   private static final Pattern SUSPICIOUS_PATTERN = Pattern.compile(
-      ".*(?i)(script|javascript|vbscript|onload|onerror).*");
+      ".*(?i)\\b(script|javascript|vbscript|onload|onerror)\\b.*");
 
   private final BookRepository bookRepository;
 
-  public void validate(BookRequest request) {
-    logger.debug("Starting validation for BookRequest: {}", request);
+  public void validate(Book book) {
+    logger.debug("Starting validation for BookRequest: {}", book);
 
-    validateSecurity(request);
-    validateBusinessRules(request);
+    validateSecurity(book);
+    validateBusinessRules(book);
 
-    logger.debug("Validation completed successfully for ISBN: {}", request.getIsbn());
+    logger.debug("Validation completed successfully for ISBN: {}", book.getIsbn());
   }
 
-  public void validateSecurity(BookRequest request) {
+  public void validateSecurity(Book book) {
     logger.debug("Validating security constraints");
 
-    validateNoXssCharacters("title", request.getTitle());
-    validateNoXssCharacters("subtitle", request.getSubtitle());
-    validateNoXssCharacters("description", request.getDescription());
+    validateNoXssCharacters("title", book.getTitle());
+    validateNoXssCharacters("subtitle", book.getSubtitle());
+    validateNoXssCharacters("description", book.getDescription());
 
-    validateNoSuspiciousContent("title", request.getTitle());
-    validateNoSuspiciousContent("subtitle", request.getSubtitle());
-    validateNoSuspiciousContent("description", request.getDescription());
+    validateNoSuspiciousContent("title", book.getTitle());
+    validateNoSuspiciousContent("subtitle", book.getSubtitle());
+    validateNoSuspiciousContent("description", book.getDescription());
   }
 
-  public void validateBusinessRules(BookRequest request) {
+  public void validateBusinessRules(Book book) {
     logger.debug("Validating business rules");
 
-    validateIsbnFormat(request.getIsbn());
-    validateTitleContent(request.getTitle());
-    validateCoherence(request);
+    validateIsbnFormat(book.getIsbn());
+    validateTitleContent(book.getTitle());
+    validateCoherence(book);
   }
 
   private void validateIsbnFormat(String isbn) {
-    if (isbn == null) {
-      return; // Déjà géré par @NotBlank
-    }
 
     if (!ISBN_DIGIT_PATTERN.matcher(isbn).matches()) {
       throw new InvalidReferenceException(
@@ -85,15 +88,15 @@ public class BookRequestValidator {
     }
   }
 
-  private void validateCoherence(BookRequest request) {
-    if (request.getSubtitle() != null && !request.getSubtitle().trim().isEmpty()) {
-      if (request.getTitle().equals(request.getSubtitle())) {
+  private void validateCoherence(Book book) {
+    if (book.getSubtitle() != null && !book.getSubtitle().trim().isEmpty()) {
+      if (book.getTitle().equals(book.getSubtitle())) {
         throw new InvalidReferenceException("Subtitle must be different from title");
       }
     }
 
-    if (request.getDescription() != null && !request.getDescription().trim().isEmpty()) {
-      if (request.getTitle().equals(request.getDescription().trim())) {
+    if (book.getDescription() != null && !book.getDescription().trim().isEmpty()) {
+      if (book.getTitle().equals(book.getDescription().trim())) {
         throw new InvalidReferenceException("Description must be different from title");
       }
     }
@@ -107,7 +110,7 @@ public class BookRequestValidator {
     if (XSS_PATTERN.matcher(value).matches()) {
       logger.warn("XSS characters detected in field '{}': {}", fieldName, value);
       throw new InvalidReferenceException(
-          String.format("Field '%s' contains invalid characters: < > \" ' & ;", fieldName)
+          String.format("Field '%s' contains invalid characters: < > \" ;", fieldName)
       );
     }
   }

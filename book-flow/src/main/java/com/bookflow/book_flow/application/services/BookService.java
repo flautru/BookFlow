@@ -1,6 +1,7 @@
 package com.bookflow.book_flow.application.services;
 
 import com.bookflow.book_flow.application.exceptions.EntityNotFoundException;
+import com.bookflow.book_flow.application.validators.BookValidator;
 import com.bookflow.book_flow.domain.entities.Book;
 import com.bookflow.book_flow.domain.repositories.BookRepository;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class BookService {
 
   private final BookRepository bookRepository;
+  private final BookValidator bookValidator;
 
   public Book findById(Long id) {
     return bookRepository.findById(id)
@@ -28,6 +30,7 @@ public class BookService {
   }
 
   public Book save(Book book) {
+    bookValidator.validate(book);
     return bookRepository.save(book);
   }
 
