@@ -66,6 +66,17 @@
       <groupId>org.springframework.boot</groupId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <artifactId>flyway-core</artifactId>
+      <groupId>org.flywaydb</groupId>
+    </dependency>
+
+    <dependency>
+      <artifactId>flyway-database-postgresql</artifactId>
+      <groupId>org.flywaydb</groupId>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
   <description>Modern Library Management System</description>
   <developers>
