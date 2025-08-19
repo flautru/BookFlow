@@ -77,6 +77,11 @@
       <groupId>org.flywaydb</groupId>
       <scope>runtime</scope>
     </dependency>
+
+    <dependency>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
   </dependencies>
   <description>Modern Library Management System</description>
   <developers>
