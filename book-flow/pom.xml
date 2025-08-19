@@ -82,7 +82,13 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
       <groupId>org.springframework.boot</groupId>
     </dependency>
+
+    <dependency>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+      <groupId>io.micrometer</groupId>
+    </dependency>
   </dependencies>
+
   <description>Modern Library Management System</description>
   <developers>
     <developer/>
