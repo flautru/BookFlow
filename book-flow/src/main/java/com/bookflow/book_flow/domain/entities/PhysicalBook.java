@@ -13,10 +13,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "physical_books")
 @Data
+@ToString(exclude = {"book"})
+@EqualsAndHashCode(exclude = {"book"})
 public class PhysicalBook {
 
   @Id

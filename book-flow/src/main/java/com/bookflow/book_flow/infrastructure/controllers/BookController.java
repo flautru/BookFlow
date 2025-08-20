@@ -46,7 +46,7 @@ public class BookController {
   public ResponseEntity<List<BookResponse>> getAllBooks() {
     List<Book> books = bookService.findAll();
     List<BookResponse> enrichedBooks = books.stream()
-        .map(this::enrichBookWithRelations)
+        .map(bookMapper::toResponseWithRelations)
         .toList();
     return ResponseEntity.ok(enrichedBooks);
   }

@@ -14,12 +14,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "author_roles",
     uniqueConstraints = @UniqueConstraint(
         columnNames = {"book_id", "author_id", "contribution_type"}))
 @Data
+@ToString(exclude = {"book", "author"})
+@EqualsAndHashCode(exclude = {"book", "author"})
 public class AuthorRole {
 
   @Id

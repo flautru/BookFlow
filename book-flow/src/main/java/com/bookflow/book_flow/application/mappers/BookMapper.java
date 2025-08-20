@@ -2,9 +2,7 @@ package com.bookflow.book_flow.application.mappers;
 
 import com.bookflow.book_flow.application.dto.request.BookRequest;
 import com.bookflow.book_flow.application.dto.response.BookResponse;
-import com.bookflow.book_flow.domain.entities.AuthorRole;
 import com.bookflow.book_flow.domain.entities.Book;
-import com.bookflow.book_flow.domain.entities.BookGenre;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -35,13 +33,19 @@ public class BookMapper {
     );
   }
 
-  public BookResponse toResponseWithRelations(Book book,
-      List<AuthorRole> authorRoles,
-      List<BookGenre> bookGenres) {
+  public BookResponse toResponseWithRelations(Book book) {
     BookResponse response = toResponse(book);
     if (response != null) {
-      response.setAuthors(authorRoleMapper.toResponseList(authorRoles));
-      response.setGenres(bookGenreMapper.toResponseList(bookGenres));
+      response.setAuthors(
+          book.getAuthorRoles().stream()
+              .map(authorRoleMapper::toResponse)
+              .collect(Collectors.toList())
+      );
+      response.setGenres(
+          book.getBookGenres().stream()
+              .map(bookGenreMapper::toResponse)
+              .collect(Collectors.toList())
+      );
     }
     return response;
   }
@@ -51,7 +55,7 @@ public class BookMapper {
       return null;
     }
     return books.stream()
-        .map(this::toResponse)
+        .map(this::toResponseWithRelations)
         .collect(Collectors.toList());
   }
 

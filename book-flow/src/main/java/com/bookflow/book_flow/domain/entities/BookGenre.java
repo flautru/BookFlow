@@ -13,10 +13,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "book_genres")
 @Data
+@ToString(exclude = {"book", "genre"})
+@EqualsAndHashCode(exclude = {"book", "genre"})
 public class BookGenre {
 
   @Id
