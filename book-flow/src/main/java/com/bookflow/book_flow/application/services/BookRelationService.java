@@ -1,7 +1,9 @@
 package com.bookflow.book_flow.application.services;
 
 import com.bookflow.book_flow.domain.entities.Author;
+import com.bookflow.book_flow.domain.entities.AuthorRole;
 import com.bookflow.book_flow.domain.entities.Book;
+import com.bookflow.book_flow.domain.entities.BookGenre;
 import com.bookflow.book_flow.domain.entities.Genre;
 import com.bookflow.book_flow.domain.repositories.AuthorRoleRepository;
 import com.bookflow.book_flow.domain.repositories.BookGenreRepository;
@@ -20,15 +22,15 @@ public class BookRelationService {
     return authorRoleRepository.findBooksByAuthor(author);
   }
 
-  public List<Author> findAuthorsByBook(Book book) {
-    return authorRoleRepository.findAuthorsByBook(book);
+  public List<AuthorRole> findAuthorsByBook(Book book) {
+    return authorRoleRepository.findByBook(book);
   }
 
   public List<Book> findBooksByGenre(Genre genre) {
     return bookGenreRepository.findBooksByGenre(genre);
   }
 
-  public List<Genre> findGenresByBook(Book book) {
-    return bookGenreRepository.findGenresByBook(book);
+  public List<BookGenre> findGenresByBook(Book book) {
+    return bookGenreRepository.findByBook(book);
   }
 }

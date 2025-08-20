@@ -1,18 +1,20 @@
 package com.bookflow.book_flow.infrastructure.controllers;
 
 import com.bookflow.book_flow.application.dto.request.BookRequest;
-import com.bookflow.book_flow.application.dto.response.AuthorResponse;
+import com.bookflow.book_flow.application.dto.response.AuthorRoleResponse;
+import com.bookflow.book_flow.application.dto.response.BookGenreResponse;
 import com.bookflow.book_flow.application.dto.response.BookResponse;
-import com.bookflow.book_flow.application.dto.response.GenreResponse;
 import com.bookflow.book_flow.application.mappers.AuthorMapper;
+import com.bookflow.book_flow.application.mappers.AuthorRoleMapper;
+import com.bookflow.book_flow.application.mappers.BookGenreMapper;
 import com.bookflow.book_flow.application.mappers.BookMapper;
-import com.bookflow.book_flow.application.mappers.GenreMapper;
 import com.bookflow.book_flow.application.services.AuthorService;
 import com.bookflow.book_flow.application.services.BookRelationService;
 import com.bookflow.book_flow.application.services.BookService;
 import com.bookflow.book_flow.domain.entities.Author;
+import com.bookflow.book_flow.domain.entities.AuthorRole;
 import com.bookflow.book_flow.domain.entities.Book;
-import com.bookflow.book_flow.domain.entities.Genre;
+import com.bookflow.book_flow.domain.entities.BookGenre;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +37,9 @@ public class BookController {
   private final BookService bookService;
   private final BookRelationService bookRelationService;
   private final BookMapper bookMapper;
+  private final AuthorRoleMapper authorRoleMapper;
   private final AuthorMapper authorMapper;
-  private final GenreMapper genreMapper;
+  private final BookGenreMapper bookGenreMapper;
   private final AuthorService authorService;
 
   @GetMapping
@@ -74,18 +77,18 @@ public class BookController {
   }
 
   @GetMapping("/{bookId}/authors")
-  public ResponseEntity<List<AuthorResponse>> getBookAuthors(@PathVariable Long bookId) {
+  public ResponseEntity<List<AuthorRoleResponse>> getBookAuthors(@PathVariable Long bookId) {
     Book book = bookService.findById(bookId);
-    List<Author> authors = bookRelationService.findAuthorsByBook(book);
-    List<AuthorResponse> authorResponses = authorMapper.toResponseList(authors);
+    List<AuthorRole> authorRoles = bookRelationService.findAuthorsByBook(book);
+    List<AuthorRoleResponse> authorResponses = authorRoleMapper.toResponseList(authorRoles);
     return ResponseEntity.ok(authorResponses);
   }
 
   @GetMapping("/{bookId}/genres")
-  public ResponseEntity<List<GenreResponse>> getBookGenres(@PathVariable Long bookId) {
+  public ResponseEntity<List<BookGenreResponse>> getBookGenres(@PathVariable Long bookId) {
     Book book = bookService.findById(bookId);
-    List<Genre> genres = bookRelationService.findGenresByBook(book);
-    List<GenreResponse> genreResponses = genreMapper.toResponseList(genres);
+    List<BookGenre> bookGenres = bookRelationService.findGenresByBook(book);
+    List<BookGenreResponse> genreResponses = bookGenreMapper.toResponseList(bookGenres);
     return ResponseEntity.ok(genreResponses);
   }
 
@@ -99,12 +102,12 @@ public class BookController {
 
   private BookResponse enrichBookWithRelations(Book book) {
     BookResponse response = bookMapper.toResponse(book);
-    
-    List<Author> authors = bookRelationService.findAuthorsByBook(book);
-    List<Genre> genres = bookRelationService.findGenresByBook(book);
 
-    response.setAuthors(authorMapper.toResponseList(authors));
-    response.setGenres(genreMapper.toResponseList(genres));
+    List<AuthorRole> authorRoles = bookRelationService.findAuthorsByBook(book);
+    List<BookGenre> bookGenres = bookRelationService.findGenresByBook(book);
+
+    response.setAuthors(authorRoleMapper.toResponseList(authorRoles));
+    response.setGenres(bookGenreMapper.toResponseList(bookGenres));
 
     return response;
   }

@@ -12,6 +12,7 @@ import com.bookflow.book_flow.domain.repositories.AuthorRoleRepository;
 import com.bookflow.book_flow.domain.repositories.BookRepository;
 import com.bookflow.book_flow.utils.TestDataFactory;
 import java.time.LocalDate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * Tests d'intégration complets pour AuthorController Valide la stack : HTTP → Controller → Service
@@ -29,7 +29,6 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class AuthorControllerIntegrationTest {
 
   @LocalServerPort
@@ -52,6 +51,10 @@ class AuthorControllerIntegrationTest {
   @BeforeEach
   void setUp() {
     baseUrl = "http://localhost:" + port + "/api/authors";
+  }
+
+  @AfterEach
+  void cleanup() {
     authorRoleRepository.deleteAll();
     bookRepository.deleteAll();
     authorRepository.deleteAll();

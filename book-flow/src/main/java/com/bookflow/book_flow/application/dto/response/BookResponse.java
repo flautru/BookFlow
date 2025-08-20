@@ -12,8 +12,8 @@ public class BookResponse {
   private String subtitle;
   private String description;
   private Integer publication_year;
-  private List<AuthorResponse> authors;
-  private List<GenreResponse> genres;
+  private List<AuthorRoleResponse> authors;
+  private List<BookGenreResponse> genres;
 
   // Constructors
   public BookResponse() {

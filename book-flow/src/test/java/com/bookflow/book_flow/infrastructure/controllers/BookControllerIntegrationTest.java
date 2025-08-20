@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookflow.book_flow.application.dto.request.BookRequest;
 import com.bookflow.book_flow.application.dto.response.AuthorResponse;
+import com.bookflow.book_flow.application.dto.response.BookGenreResponse;
 import com.bookflow.book_flow.application.dto.response.BookResponse;
-import com.bookflow.book_flow.application.dto.response.GenreResponse;
 import com.bookflow.book_flow.domain.entities.Author;
 import com.bookflow.book_flow.domain.entities.AuthorRole;
 import com.bookflow.book_flow.domain.entities.Book;
@@ -20,6 +20,7 @@ import com.bookflow.book_flow.domain.repositories.BookRepository;
 import com.bookflow.book_flow.domain.repositories.GenreRepository;
 import com.bookflow.book_flow.utils.TestDataFactory;
 import java.time.LocalDate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class BookControllerIntegrationTest {
 
   @LocalServerPort
@@ -65,6 +64,12 @@ class BookControllerIntegrationTest {
   @BeforeEach
   void setUp() {
     baseUrl = "http://localhost:" + port + "/api/books";
+
+  }
+
+  @AfterEach
+  void cleanup() {
+    // Nettoyage manuel après chaque test
     authorRoleRepository.deleteAll();
     bookGenreRepository.deleteAll();
     bookRepository.deleteAll();
@@ -335,19 +340,27 @@ class BookControllerIntegrationTest {
 
     // When
     String url = baseUrl + "/" + savedBook.getId() + "/genres";
-    ResponseEntity<GenreResponse[]> response = restTemplate.getForEntity(url,
-        GenreResponse[].class);
+    ResponseEntity<BookGenreResponse[]> response = restTemplate.getForEntity(url,
+        BookGenreResponse[].class);
 
     // Then
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    GenreResponse[] genres = response.getBody();
-    assertThat(genres).isNotNull();
-    assertThat(genres).hasSize(3);
+    BookGenreResponse[] bookGenre = response.getBody();
+    assertThat(bookGenre).isNotNull();
+    assertThat(bookGenre).hasSize(3);
 
-    assertThat(genres)
-        .extracting(GenreResponse::name)
+    assertThat(bookGenre)
+        .extracting(BookGenreResponse::getName)
         .containsExactlyInAnyOrder("Action", "Romance", "Adventure");
+
+    assertThat(bookGenre)
+        .extracting(BookGenreResponse::getIntensity)
+        .containsExactlyInAnyOrder(
+            GenreIntensity.PRIMARY,
+            GenreIntensity.PRIMARY,
+            GenreIntensity.SECONDARY
+        );
   }
 
   @Test
@@ -367,7 +380,7 @@ class BookControllerIntegrationTest {
   void createBook_should_create_book_with_valid_request() {
     // Given - Requête valide
     BookRequest request = new BookRequest();
-    request.setIsbn("1234567890123");
+    request.setIsbn("9785412000046");
     request.setTitle("Nouveau Livre");
     request.setSubtitle("Sous-titre test");
     request.setDescription("Description du nouveau livre");
@@ -385,12 +398,12 @@ class BookControllerIntegrationTest {
 
     BookResponse createdBook = response.getBody();
     assertThat(createdBook).isNotNull();
-    assertThat(createdBook.getIsbn()).isEqualTo("1234567890123");
+    assertThat(createdBook.getIsbn()).isEqualTo("9785412000046");
     assertThat(createdBook.getTitle()).isEqualTo("Nouveau Livre");
     assertThat(createdBook.getId()).isNotNull(); // ID généré
 
     assertThat(bookRepository.count()).isEqualTo(1);
-    Book savedBook = bookRepository.findByIsbn("1234567890123").orElse(null);
+    Book savedBook = bookRepository.findByIsbn("9785412000046").orElse(null);
     assertThat(savedBook).isNotNull();
     assertThat(savedBook.getTitle()).isEqualTo("Nouveau Livre");
   }
@@ -417,12 +430,12 @@ class BookControllerIntegrationTest {
   @Test
   void createBook_should_return_409_with_duplicate_isbn() {
     // Given
-    Book existingBook = TestDataFactory.createTestBook("1234567890123", "Livre existant",
+    Book existingBook = TestDataFactory.createTestBook("9785412000046", "Livre existant",
         "Déjà en base", "Premier livre");
     bookRepository.save(existingBook);
 
     BookRequest duplicateRequest = new BookRequest();
-    duplicateRequest.setIsbn("1234567890123"); // ISBN déjà utilisé
+    duplicateRequest.setIsbn("9785412000046"); // ISBN déjà utilisé
     duplicateRequest.setTitle("Livre dupliqué");
     duplicateRequest.setSubtitle("Même ISBN");
     duplicateRequest.setDescription("Ne devrait pas être créé");
@@ -438,7 +451,7 @@ class BookControllerIntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
 
     assertThat(bookRepository.count()).isEqualTo(1);
-    Book onlyBook = bookRepository.findByIsbn("1234567890123").orElse(null);
+    Book onlyBook = bookRepository.findByIsbn("9785412000046").orElse(null);
     assertThat(onlyBook.getTitle()).isEqualTo("Livre existant"); // Pas le dupliqué
   }
 }

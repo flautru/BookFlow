@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookflow_db_test
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  flyway:
+    url: jdbc:postgresql://localhost:5432/bookflow_db_test
+    user: postgres
+    password: admin
+    locations: classpath:db/migration/structure
+    clean-disabled: false
+    baseline-on-migrate: true
+
+logging:
+  level:
+    org.springframework.test: WARN
+    org.hibernate: WARN

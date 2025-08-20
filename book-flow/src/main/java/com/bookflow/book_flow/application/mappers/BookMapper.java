@@ -2,7 +2,9 @@ package com.bookflow.book_flow.application.mappers;
 
 import com.bookflow.book_flow.application.dto.request.BookRequest;
 import com.bookflow.book_flow.application.dto.response.BookResponse;
+import com.bookflow.book_flow.domain.entities.AuthorRole;
 import com.bookflow.book_flow.domain.entities.Book;
+import com.bookflow.book_flow.domain.entities.BookGenre;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -10,12 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookMapper {
 
-  private final AuthorMapper authorMapper;
-  private final GenreMapper genreMapper;
+  private final AuthorRoleMapper authorRoleMapper;
+  private final BookGenreMapper bookGenreMapper;
 
-  public BookMapper(AuthorMapper authorMapper, GenreMapper genreMapper) {
-    this.authorMapper = authorMapper;
-    this.genreMapper = genreMapper;
+  public BookMapper(AuthorRoleMapper authorRoleMapper, BookGenreMapper bookGenreMapper) {
+    this.authorRoleMapper = authorRoleMapper;
+    this.bookGenreMapper = bookGenreMapper;
   }
 
   public BookResponse toResponse(Book book) {
@@ -34,12 +36,12 @@ public class BookMapper {
   }
 
   public BookResponse toResponseWithRelations(Book book,
-      List<com.bookflow.book_flow.domain.entities.Author> authors,
-      List<com.bookflow.book_flow.domain.entities.Genre> genres) {
+      List<AuthorRole> authorRoles,
+      List<BookGenre> bookGenres) {
     BookResponse response = toResponse(book);
     if (response != null) {
-      response.setAuthors(authorMapper.toResponseList(authors));
-      response.setGenres(genreMapper.toResponseList(genres));
+      response.setAuthors(authorRoleMapper.toResponseList(authorRoles));
+      response.setGenres(bookGenreMapper.toResponseList(bookGenres));
     }
     return response;
   }
