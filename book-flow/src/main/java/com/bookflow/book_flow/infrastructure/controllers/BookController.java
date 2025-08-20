@@ -42,8 +42,10 @@ public class BookController {
   @GetMapping
   public ResponseEntity<List<BookResponse>> getAllBooks() {
     List<Book> books = bookService.findAll();
-    List<BookResponse> bookResponses = bookMapper.toResponseList(books);
-    return ResponseEntity.ok(bookResponses);
+    List<BookResponse> enrichedBooks = books.stream()
+        .map(this::enrichBookWithRelations)
+        .toList();
+    return ResponseEntity.ok(enrichedBooks);
   }
 
   @GetMapping("/{isbn}")
@@ -93,5 +95,17 @@ public class BookController {
     Book savedBook = bookService.save(book);
     BookResponse bookResponse = bookMapper.toResponse(savedBook);
     return ResponseEntity.status(HttpStatus.CREATED).body(bookResponse);
+  }
+
+  private BookResponse enrichBookWithRelations(Book book) {
+    BookResponse response = bookMapper.toResponse(book);
+    
+    List<Author> authors = bookRelationService.findAuthorsByBook(book);
+    List<Genre> genres = bookRelationService.findGenresByBook(book);
+
+    response.setAuthors(authorMapper.toResponseList(authors));
+    response.setGenres(genreMapper.toResponseList(genres));
+
+    return response;
   }
 }

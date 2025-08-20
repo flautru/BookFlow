@@ -33,7 +33,8 @@ CREATE TABLE books (
     isbn VARCHAR(13) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
     subtitle VARCHAR(255),
-    description TEXT
+    description TEXT,
+    publication_year INTEGER
 );
 
 -- Table Physical Books

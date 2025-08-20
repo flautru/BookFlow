@@ -35,6 +35,8 @@ public class Book {
   @Column(columnDefinition = "TEXT")
   private String description;
 
+  private Integer publication_year;
+
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<PhysicalBook> physicalBooks = new HashSet<>();
 

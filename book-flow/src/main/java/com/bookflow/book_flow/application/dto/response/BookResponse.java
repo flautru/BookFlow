@@ -11,6 +11,7 @@ public class BookResponse {
   private String title;
   private String subtitle;
   private String description;
+  private Integer publication_year;
   private List<AuthorResponse> authors;
   private List<GenreResponse> genres;
 
@@ -18,11 +19,13 @@ public class BookResponse {
   public BookResponse() {
   }
 
-  public BookResponse(Long id, String isbn, String title, String subtitle, String description) {
+  public BookResponse(Long id, String isbn, String title, String subtitle, String description,
+      Integer publication_year) {
     this.id = id;
     this.isbn = isbn;
     this.title = title;
     this.subtitle = subtitle;
     this.description = description;
+    this.publication_year = publication_year;
   }
 }

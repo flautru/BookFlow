@@ -1,0 +1,98 @@
+<div class="book-list-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="header-toolbar">
+    <mat-icon>library_books</mat-icon>
+    <span class="spacer"></span>
+    <h1>BookFlow Library</h1>
+    <span class="spacer"></span>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="loadBooks()"
+      [disabled]="bookService.isLoading$()">
+      <mat-icon>refresh</mat-icon>
+      {{ bookService.isLoading$() ? 'Loading...' : 'Refresh' }}
+    </button>
+  </mat-toolbar>
+
+  <!-- Loading -->
+  <div *ngIf="bookService.isLoading$()" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading books...</p>
+  </div>
+
+  <!-- Error -->
+  <mat-card *ngIf="bookService.error$()" class="error-card" appearance="outlined">
+    <mat-card-content>
+      <mat-icon color="warn">error</mat-icon>
+      <span>{{ bookService.error$() }}</span>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Books Grid -->
+  <div *ngIf="bookService.books$().length > 0" class="books-grid">
+    <mat-card
+      *ngFor="let book of bookService.books$(); trackBy: trackByBookId"
+      class="book-card"
+      appearance="outlined">
+
+      <mat-card-content class="book-content">
+        <!-- Left Side -->
+        <div class="book-left">
+          <h2 class="book-title">{{ book.title }}</h2>
+          <h3 *ngIf="book.subtitle" class="book-subtitle">{{ book.subtitle }}</h3>
+          <div class="book-image">
+            <mat-icon class="book-icon">menu_book</mat-icon>
+          </div>
+        </div>
+
+        <!-- Right Side -->
+        <div class="book-right">
+          <div class="book-description">
+            <p *ngIf="book.description; else noDescription">
+              {{ book.description }}
+            </p>
+            <ng-template #noDescription>
+              <p class="no-description">Aucune description disponible</p>
+            </ng-template>
+          </div>
+
+          <div class="book-authors">
+            <mat-icon>person</mat-icon>
+            <span class="label">Auteurs:</span>
+            <mat-chip-set>
+                 @for (author of book.authors; track author.id) {
+      <mat-chip>{{ author.firstName }} {{ author.lastName }}</mat-chip>
+    }
+            </mat-chip-set>
+          </div>
+
+          <div class="book-genres">
+            <mat-icon>category</mat-icon>
+            <span class="label">Genres:</span>
+            <mat-chip-set>
+              @for (genre of book.genres; track genre.id) {
+      <mat-chip [color]="genre.intensity === 'PRIMARY' ? 'primary' : 'accent'">
+        {{ genre.name }} ({{ genre.intensity }})
+      </mat-chip>
+    }
+            </mat-chip-set>
+          </div>
+
+          <div class="book-meta">
+            <mat-chip-set>
+              <mat-chip>
+                <mat-icon matChipAvatar>calendar_today</mat-icon>
+                {{ book.publicationYear }}
+              </mat-chip>
+              <mat-chip>
+                <mat-icon matChipAvatar>qr_code</mat-icon>
+                {{ book.isbn }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
