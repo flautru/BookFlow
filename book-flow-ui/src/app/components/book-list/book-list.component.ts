@@ -39,4 +39,16 @@ export class BookListComponent implements OnInit {
   trackByBookId(index: number, book: any) {
     return book.id;
   }
+
+  getGenreColor(intensity: string): string {
+  switch(intensity) {
+    case 'PRIMARY': return 'primary';
+    case 'SECONDARY': return 'accent';
+    default: return 'basic';
+  }
+}
+
+getGenreClass(intensity: string): string {
+  return intensity === 'PRIMARY' ? 'genre-primary' : 'genre-secondary';
+}
 }

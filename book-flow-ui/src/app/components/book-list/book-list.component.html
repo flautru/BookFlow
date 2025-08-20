@@ -72,8 +72,8 @@
             <span class="label">Genres:</span>
             <mat-chip-set>
               @for (genre of book.genres; track genre.id) {
-      <mat-chip [color]="genre.intensity === 'PRIMARY' ? 'primary' : 'accent'">
-        {{ genre.name }} ({{ genre.intensity }})
+      <mat-chip [ngClass]="genre.intensity === 'PRIMARY' ? 'genre-primary-border' : 'genre-secondary-border'">
+        {{ genre.name }}
       </mat-chip>
     }
             </mat-chip-set>

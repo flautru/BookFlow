@@ -10,12 +10,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookMapper {
 
-  private final AuthorMapper authorMapper;
-  private final GenreMapper genreMapper;
+  private final AuthorRoleMapper authorRoleMapper;
+  private final BookGenreMapper bookGenreMapper;
 
-  public BookMapper(AuthorMapper authorMapper, GenreMapper genreMapper) {
-    this.authorMapper = authorMapper;
-    this.genreMapper = genreMapper;
+  public BookMapper(AuthorRoleMapper authorRoleMapper, BookGenreMapper bookGenreMapper) {
+    this.authorRoleMapper = authorRoleMapper;
+    this.bookGenreMapper = bookGenreMapper;
   }
 
   public BookResponse toResponse(Book book) {
@@ -33,13 +33,19 @@ public class BookMapper {
     );
   }
 
-  public BookResponse toResponseWithRelations(Book book,
-      List<com.bookflow.book_flow.domain.entities.Author> authors,
-      List<com.bookflow.book_flow.domain.entities.Genre> genres) {
+  public BookResponse toResponseWithRelations(Book book) {
     BookResponse response = toResponse(book);
     if (response != null) {
-      response.setAuthors(authorMapper.toResponseList(authors));
-      response.setGenres(genreMapper.toResponseList(genres));
+      response.setAuthors(
+          book.getAuthorRoles().stream()
+              .map(authorRoleMapper::toResponse)
+              .collect(Collectors.toList())
+      );
+      response.setGenres(
+          book.getBookGenres().stream()
+              .map(bookGenreMapper::toResponse)
+              .collect(Collectors.toList())
+      );
     }
     return response;
   }
@@ -49,7 +55,7 @@ public class BookMapper {
       return null;
     }
     return books.stream()
-        .map(this::toResponse)
+        .map(this::toResponseWithRelations)
         .collect(Collectors.toList());
   }
 

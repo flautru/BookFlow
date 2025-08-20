@@ -165,3 +165,23 @@
     flex: none;
   }
 }
+
+.genre-primary-border {
+  border: 2px solid #1976d2 !important;  // Bleu primary
+  border-radius: 16px;
+}
+
+.genre-secondary-border {
+  border: 2px solid #757575 !important;  // Gris secondary
+  border-radius: 16px;
+}
+
+.genre-primary-border:hover {
+  border-color: #1565c0;
+  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.3);
+}
+
+.genre-secondary-border:hover {
+  border-color: #616161;
+  box-shadow: 0 2px 4px rgba(117, 117, 117, 0.3);
+}

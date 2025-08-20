@@ -7,12 +7,16 @@ import com.bookflow.book_flow.domain.repositories.BookRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class BookService {
 
+  private static final Logger logger = LoggerFactory.getLogger(BookService.class);
   private final BookRepository bookRepository;
   private final BookValidator bookValidator;
 
@@ -34,8 +38,18 @@ public class BookService {
     return bookRepository.save(book);
   }
 
+  @Transactional(readOnly = true)
   public List<Book> findAll() {
-    return bookRepository.findAll();
+    if (logger.isDebugEnabled()) {
+      long startTime = System.currentTimeMillis();
+      List<Book> books = bookRepository.findAllWithRelations();
+      long duration = System.currentTimeMillis() - startTime;
+      logger.debug("📊 PERFORMANCE: findAll() took {}ms for {} books", duration, books.size());
+
+      return books;
+    }
+
+    return bookRepository.findAllWithRelations();
   }
 
 }

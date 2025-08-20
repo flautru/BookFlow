@@ -13,6 +13,5 @@ public interface AuthorRoleRepository extends JpaRepository<AuthorRole, Long> {
   @Query("SELECT ar.book FROM AuthorRole ar WHERE ar.author = :author")
   List<Book> findBooksByAuthor(@Param("author") Author author);
 
-  @Query("SELECT ar.author FROM AuthorRole ar WHERE ar.book = :book")
-  List<Author> findAuthorsByBook(@Param("book") Book book);
+  List<AuthorRole> findByBook(@Param("book") Book book);
 }

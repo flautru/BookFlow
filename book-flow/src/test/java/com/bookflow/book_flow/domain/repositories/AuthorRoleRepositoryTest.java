@@ -73,7 +73,7 @@ class AuthorRoleRepositoryTest {
   }
 
   @Test
-  void findAuthorsByBook_should_return_multiple_authors_with_book_having_several_authors() {
+  void findAuthorsByBook_should_return_multiple_authors_with_book_having_several_() {
     // Given
     Book book = TestDataFactory.createTestBook();
     Author author1 = TestDataFactory.createTestAuthor("Victor", "Hugo", "France",
@@ -91,22 +91,23 @@ class AuthorRoleRepositoryTest {
     authorRoleRepository.save(role2);
 
     // When
-    List<Author> authors = authorRoleRepository.findAuthorsByBook(book);
+    List<AuthorRole> authors = authorRoleRepository.findByBook(book);
 
     // Then
     assertThat(authors).hasSize(2);
-    assertThat(authors).extracting(Author::getLastName).containsExactlyInAnyOrder("Hugo", "Dumas");
+    assertThat(authors).extracting(AuthorRole::getAuthor).extracting(Author::getLastName)
+        .containsExactlyInAnyOrder("Hugo", "Dumas");
   }
 
   @Test
-  void findAuthorsByBook_should_return_empty_list_with_book_having_no_authors() {
+  void findAuthorsByBook_should_return_empty_list_with_book_having_no_() {
     // Given
     Book bookWithoutAuthors = TestDataFactory.createTestBook("9999999999999", "Orphan Book",
         "No Authors", "A book without authors");
     bookRepository.save(bookWithoutAuthors);
 
     // When
-    List<Author> authors = authorRoleRepository.findAuthorsByBook(bookWithoutAuthors);
+    List<AuthorRole> authors = authorRoleRepository.findByBook(bookWithoutAuthors);
 
     // Then
     assertThat(authors).isEmpty();

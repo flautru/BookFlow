@@ -13,10 +13,14 @@ import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "books")
 @Data
+@ToString(exclude = {"physicalBooks", "authorRoles", "bookGenres"})
+@EqualsAndHashCode(exclude = {"physicalBooks", "authorRoles", "bookGenres"})
 public class Book {
 
   @Id
@@ -39,6 +43,12 @@ public class Book {
 
   @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private Set<PhysicalBook> physicalBooks = new HashSet<>();
+
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private Set<AuthorRole> authorRoles = new HashSet<>();
+
+  @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private Set<BookGenre> bookGenres = new HashSet<>();
 
   public long getAvailableCopies() {
     return physicalBooks.stream()

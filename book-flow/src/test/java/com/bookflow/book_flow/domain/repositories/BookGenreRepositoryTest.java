@@ -70,7 +70,7 @@ class BookGenreRepositoryTest {
   }
 
   @Test
-  void findGenresByBook_should_return_multiple_genres_with_book_having_several_genres() {
+  void findGenresByBook_should_return_multiple_genres_with_book_having_several_() {
     // Given
     Book book = TestDataFactory.createTestBook();
     Genre actionGenre = TestDataFactory.createTestGenre("Action", "Action genre");
@@ -90,26 +90,26 @@ class BookGenreRepositoryTest {
     bookGenreRepository.save(romanceSecondary);
 
     // When
-    List<Genre> genres = bookGenreRepository.findGenresByBook(book);
+    List<BookGenre> bookGenres = bookGenreRepository.findByBook(book);
 
     // Then
-    assertThat(genres).hasSize(3);
-    assertThat(genres).extracting(Genre::getName)
+    assertThat(bookGenres).hasSize(3);
+    assertThat(bookGenres).extracting(BookGenre::getGenre).extracting(Genre::getName)
         .containsExactlyInAnyOrder("Action", "Adventure", "Romance");
   }
 
   @Test
-  void findGenresByBook_should_return_empty_list_with_book_having_no_genres() {
+  void findGenresByBook_should_return_empty_list_with_book_having_no_() {
     // Given
     Book bookWithoutGenres = TestDataFactory.createTestBook("9999999999999", "Unclassified Book",
         "No Genre", "A book without any genre");
     bookRepository.save(bookWithoutGenres);
 
     // When
-    List<Genre> genres = bookGenreRepository.findGenresByBook(bookWithoutGenres);
+    List<BookGenre> bookGenres = bookGenreRepository.findByBook(bookWithoutGenres);
 
     // Then
-    assertThat(genres).isEmpty();
+    assertThat(bookGenres).isEmpty();
   }
 
   @Test

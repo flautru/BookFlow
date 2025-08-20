@@ -23,6 +23,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        generate_statistics: true
 
 management:
   endpoints:
@@ -44,3 +45,7 @@ management:
       enabled: true
     diskspace:
       enabled: true
+logging:
+  level:
+    org.hibernate.stat: DEBUG
+    com.bookflow.book_flow: INFO
