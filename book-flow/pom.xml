@@ -29,6 +29,26 @@
         </configuration>
         <groupId>org.springframework.boot</groupId>
       </plugin>
+
+      <plugin>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <id>report</id>
+            <phase>test</phase>
+          </execution>
+        </executions>
+        <groupId>org.jacoco</groupId>
+        <version>0.8.10</version>
+      </plugin>
     </plugins>
   </build>
   <dependencies>

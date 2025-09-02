@@ -1,0 +1,217 @@
+name: 🚀 BookFlow Full-Stack CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ${{ github.repository }}-backend
+  FRONTEND_IMAGE: ${{ github.repository }}-frontend
+
+jobs:
+  test-backend:
+    name: 🧪 Backend Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: bookflow_db_test
+          POSTGRES_USER: bookflow_user
+          POSTGRES_PASSWORD: bookflow_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: ☕ Setup Java 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: 📦 Cache Maven Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-maven-${{ hashFiles('book-flow/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: 🧪 Run Backend Tests
+      run: |
+        cd book-flow
+        mvn clean test -Dspring.profiles.active=test
+      env:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/bookflow_db_test
+
+    - name: 📊 Backend Test Coverage
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: book-flow/target/site/jacoco/jacoco.xml
+        flags: backend
+        fail_ci_if_error: false
+
+  test-frontend:
+    name: 🎨 Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: book-flow-ui/package-lock.json
+
+    - name: 📦 Install Frontend Dependencies
+      run: |
+        cd book-flow-ui
+        npm ci
+
+    - name: 🔍 Frontend Lint
+      run: |
+        cd book-flow-ui
+        npm run lint
+
+    - name: 🧪 Run Frontend Tests
+      run: |
+        cd book-flow-ui
+        npm run test:ci
+
+    - name: 🏗️ Build Frontend
+      run: |
+        cd book-flow-ui
+        npm run build
+
+  build-backend:
+    name: 🐳 Build Backend Docker
+    runs-on: ubuntu-latest
+    needs: test-backend
+    permissions:
+      contents: read
+      packages: write
+      
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🔑 Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🏷️ Extract Backend Metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+
+    - name: 🐳 Build and Push Backend Image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./book-flow
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  build-frontend:
+    name: 🎨 Build Frontend Docker
+    runs-on: ubuntu-latest
+    needs: test-frontend
+    permissions:
+      contents: read
+      packages: write
+      
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🔑 Login to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🏷️ Extract Frontend Metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+
+    - name: 🐳 Build and Push Frontend Image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./book-flow-ui
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  integration-test:
+    name: 🔗 Integration Tests
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🧪 Test Full Stack with Docker Compose
+      run: |
+        echo "🐳 Starting full stack integration test..."
+        docker-compose up --build -d
+        
+        echo "⏳ Waiting for services to be ready..."
+        sleep 60
+        
+        echo "🔍 Testing backend health..."
+        curl -f http://localhost:8080/actuator/health || exit 1
+        
+        echo "🔍 Testing frontend..."
+        curl -f http://localhost:4200 || exit 1
+        
+        echo "🔍 Testing API integration..."
+        curl -f http://localhost:8080/api/books || exit 1
+        
+        echo "✅ All integration tests passed!"
+        docker-compose down
+
+  deploy:
+    name: 🚀 Deploy Notification
+    runs-on: ubuntu-latest
+    needs: integration-test
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 🎉 Deployment Success
+      run: |
+        echo "🚀 BookFlow successfully deployed!"
+        echo "📦 Backend Image: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE }}:main"
+        echo "🎨 Frontend Image: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:main"
