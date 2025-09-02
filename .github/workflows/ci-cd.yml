@@ -57,6 +57,8 @@ jobs:
         SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/bookflow_db_test
         SPRING_DATASOURCE_USERNAME: postgres
         SPRING_DATASOURCE_PASSWORD: bookflow_password
+        SPRING_FLYWAY_USER: postgres
+        SPRING_FLYWAY_PASSWORD: bookflow_password
 
     - name: 📊 Backend Test Coverage
       uses: codecov/codecov-action@v3
