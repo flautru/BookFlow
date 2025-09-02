@@ -21,7 +21,7 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_DB: bookflow_db_test
-          POSTGRES_USER: bookflow_user
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: bookflow_password
         options: >-
           --health-cmd pg_isready
@@ -55,6 +55,8 @@ jobs:
         mvn clean test -Dspring.profiles.active=test
       env:
         SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/bookflow_db_test
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: bookflow_password
 
     - name: 📊 Backend Test Coverage
       uses: codecov/codecov-action@v3
